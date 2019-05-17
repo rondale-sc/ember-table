@@ -195,7 +195,7 @@ export default Component.extend({
     this.addObserver('reorderFunction', this._updateApi);
 
     this.addObserver('sorts', this._updateColumnTree);
-    this.addObserver('columns', this._updateColumnTree);
+    this.addObserver('columns', this._onColumnsChange);
     this.addObserver('fillMode', this._updateColumnTree);
     this.addObserver('resizeMode', this._updateColumnTree);
     this.addObserver('widthConstraint', this._updateColumnTree);
@@ -204,7 +204,7 @@ export default Component.extend({
     this.addObserver('enableResize', this._updateColumnTree);
     this.addObserver('enableReorder', this._updateColumnTree);
   },
-
+ 
   _updateApi() {
     this.set('unwrappedApi.columnTree', this.columnTree);
     this.set('unwrappedApi.sorts', this.get('sorts'));
@@ -225,6 +225,11 @@ export default Component.extend({
     this.columnTree.set('enableReorder', this.get('enableReorder'));
   },
 
+  _onColumnsChange() {
+    this._updateColumnTree();
+    this.fillupHandler();
+  },
+
   didInsertElement() {
     this._super(...arguments);
 
@@ -234,7 +239,7 @@ export default Component.extend({
 
     this._tableResizeSensor = new ResizeSensor(
       this._container,
-      bind(this.fillupHandler.bind(this))
+      bind(this, this.fillupHandler)
     );
   },
 
